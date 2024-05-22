@@ -22,6 +22,7 @@
     # Files
     trash-cli
     fzf
+    ripgrep
 
     # Tools
     bat

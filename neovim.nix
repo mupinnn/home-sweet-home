@@ -75,6 +75,7 @@
         config = toLuaFile ./configs/nvim/telescope.lua;
       }
       telescope-fzf-native-nvim
+      plenary-nvim
     ];
 
     extraLuaConfig = ''
