@@ -76,6 +76,22 @@
       }
       telescope-fzf-native-nvim
       plenary-nvim
+
+      cmp-nvim-lsp
+      luasnip
+      {
+        plugin = nvim-cmp;
+        config = toLuaFile ./configs/nvim/cmp.lua;
+      }
+      nvim-lspconfig
+      {
+        plugin = mason-nvim;
+        config = toLuaFile ./configs/nvim/mason.lua;
+      }
+      {
+        plugin = mason-lspconfig-nvim;
+        config = toLuaFile ./configs/nvim/lsp.lua;
+      }
     ];
 
     extraLuaConfig = ''
