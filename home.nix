@@ -28,6 +28,7 @@
     bat
     tmux
     fnm
+    tree-sitter
   ];
 
   # Git

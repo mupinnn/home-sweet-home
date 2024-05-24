@@ -50,6 +50,7 @@
         config = toLua "require('colorizer').setup()";
       }
 
+      nvim-ts-autotag
       {
         plugin = (nvim-treesitter.withPlugins (p: [
           p.tree-sitter-nix
@@ -77,8 +78,11 @@
       telescope-fzf-native-nvim
       plenary-nvim
 
+      neodev-nvim
+      cmp_luasnip
       cmp-nvim-lsp
       luasnip
+      friendly-snippets
       {
         plugin = nvim-cmp;
         config = toLuaFile ./configs/nvim/cmp.lua;
@@ -92,10 +96,14 @@
         plugin = mason-lspconfig-nvim;
         config = toLuaFile ./configs/nvim/lsp.lua;
       }
+
+      tokyonight-nvim
+      kanagawa-nvim
     ];
 
     extraLuaConfig = ''
     	${builtins.readFile ./configs/nvim/options.lua}
+        ${builtins.readFile ./configs/nvim/colorscheme.lua}
     '';
   };
 }
