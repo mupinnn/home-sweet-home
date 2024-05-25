@@ -14,6 +14,10 @@
   home.packages = with pkgs; [
     # Development
     jq
+    pkgs.nodePackages.pnpm
+    cargo
+    rustc
+    gcc13
 
     # Overview
     neofetch
@@ -23,6 +27,7 @@
     trash-cli
     fzf
     ripgrep
+    unzip
 
     # Tools
     bat
@@ -51,6 +56,12 @@
       prefix-highlight
       better-mouse-mode
     ];
+
+    extraConfig = ''
+      set -g prefix C-a
+      unbind C-b
+      bind C-a send-prefix
+    '';
   };
 
   # zsh
