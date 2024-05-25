@@ -26,7 +26,6 @@
 
     # Tools
     bat
-    tmux
     fnm
     tree-sitter
   ];
@@ -52,5 +51,43 @@
       prefix-highlight
       better-mouse-mode
     ];
+  };
+
+  # zsh
+  programs.zsh = {
+    enable = true;
+    enableCompletion = true;
+    autosuggestion.enable = true;
+    syntaxHighlighting.enable = true;
+    dotDir = ".config/zsh";
+
+    initExtra = ''
+      # fnm
+      eval "`fnm env`"
+      eval "$(fnm env --use-on-cd)"
+
+      setopt extended_glob
+      unsetopt nomatch
+    '';
+
+    shellAliases = {
+      ll = "ls -l";
+      mv = "mv -iv";
+      cp = "cp -iv";
+      rm = "trash-put";
+      cat = "bat";
+    };
+
+    oh-my-zsh = {
+      enable = true;
+      plugins = [
+        "git"
+        "fnm"
+        "npm"
+        "gh"
+        "command-not-found"
+      ];
+      theme = "robbyrussell";
+    };
   };
 }
