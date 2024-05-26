@@ -54,6 +54,7 @@ local function my_on_attach(bufnr)
 	-- custom mappings
 	-- global
 	vim.api.nvim_set_keymap("n", "<C-h>", ":NvimTreeToggle<cr>", { silent = true, noremap = true })
+	vim.api.nvim_set_keymap("n", "<C-b>", ":NvimTreeOpen<cr>", { silent = true, noremap = true })
 
 	-- on_attach
 	vim.keymap.set("n", "l", edit_or_open, opts("Edit Or Open"))
