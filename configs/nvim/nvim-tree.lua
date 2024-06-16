@@ -65,4 +65,10 @@ end
 
 require("nvim-tree").setup({
 	on_attach = my_on_attach,
+	filters = {
+		dotfiles = false,
+	},
+	git = {
+		ignore = false,
+	},
 })

@@ -6,6 +6,7 @@ local formatters = {
 }
 
 local ft_using_prettier = {
+	"astro",
 	"css",
 	"scss",
 	"sass",

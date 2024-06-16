@@ -7,6 +7,7 @@ require("neodev").setup({})
 
 mason_lsp.setup({
 	ensure_installed = {
+		"astro",
 		"lua_ls",
 		"cssls",
 		"eslint",
