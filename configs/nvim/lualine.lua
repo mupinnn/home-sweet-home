@@ -19,7 +19,7 @@ require("lualine").setup({
 			},
 		},
 		lualine_c = { "filename" },
-		lualine_x = { "filetype" },
+		lualine_x = { "filetype", "encoding", "fileformat" },
 		lualine_y = { "progress" },
 		lualine_z = { "location" },
 	},

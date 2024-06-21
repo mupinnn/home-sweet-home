@@ -28,6 +28,7 @@
     fzf
     ripgrep
     unzip
+    rsync
 
     # Tools
     bat
@@ -42,6 +43,9 @@
     userEmail = "itsmupin@gmail.com";
     extraConfig = {
       init = { defaultBranch = "main"; };
+      core = {
+        editor = "nano";
+      };
     };
   };
 
