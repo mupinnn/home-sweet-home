@@ -18,6 +18,7 @@
     cargo
     rustc
     gcc13
+    bun
 
     # Overview
     neofetch
