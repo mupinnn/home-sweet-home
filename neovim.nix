@@ -69,6 +69,11 @@
             p.tree-sitter-vue
             p.tree-sitter-yaml
             p.tree-sitter-astro
+            p.tree-sitter-c
+            p.tree-sitter-cpp
+            p.tree-sitter-bash
+            p.tree-sitter-cmake
+            p.tree-sitter-make
           ]));
           config = toLuaFile ./configs/nvim/treesitter.lua;
         }

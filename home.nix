@@ -19,6 +19,9 @@
     rustc
     gcc13
     bun
+    gnumake
+    cmake
+    (hiPrio clang)
 
     # Overview
     neofetch
@@ -35,6 +38,7 @@
     bat
     fnm
     tree-sitter
+    gnupg
   ];
 
   # Git
@@ -54,6 +58,9 @@
   programs.tmux = {
     enable = true;
     mouse = true;
+    prefix = "C-a";
+    terminal = "xterm-256color";
+    keyMode = "vi";
     plugins = with pkgs.tmuxPlugins; [
       sensible
       pain-control
@@ -63,9 +70,7 @@
     ];
 
     extraConfig = ''
-      set -g prefix C-a
-      unbind C-b
-      bind C-a send-prefix
+      set-option -ga terminal-overrides ",xterm-256color:Tc"
     '';
   };
 
