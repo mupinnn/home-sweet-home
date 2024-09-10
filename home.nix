@@ -8,6 +8,7 @@
 
   imports = [
     ./neovim.nix
+    ./git.nix
   ];
 
   # Packages
@@ -25,7 +26,7 @@
 
     # Overview
     neofetch
-    htop
+    btop
 
     # Files
     trash-cli
@@ -33,25 +34,24 @@
     ripgrep
     unzip
     rsync
+    xclip
 
     # Tools
     bat
     fnm
+    tree
     tree-sitter
     gnupg
+    curl
+    wget
   ];
 
-  # Git
-  programs.git = {
+  # nix-index (nix-locate) to easily find nix package by its name
+  programs.nix-index = {
     enable = true;
-    userName = "Ahmad Muwaffaq";
-    userEmail = "itsmupin@gmail.com";
-    extraConfig = {
-      init = { defaultBranch = "main"; };
-      core = {
-        editor = "nano";
-      };
-    };
+    enableBashIntegration = true;
+    enableFishIntegration = true;
+    enableZshIntegration = true;
   };
 
   # Tmux
