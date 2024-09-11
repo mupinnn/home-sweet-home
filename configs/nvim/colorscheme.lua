@@ -1,10 +1,7 @@
 local kanagawa = require("kanagawa")
--- local tokyonight = require('tokyonight')
+-- local tokyonight = require("tokyonight")
 
-kanagawa.setup({
-	theme = "dragon",
-})
-kanagawa.load()
+kanagawa.load("wave")
 
 -- tokyonight.setup()
 -- tokyonight.load()
