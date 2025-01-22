@@ -55,6 +55,16 @@ in
         condition = "gitdir:~/work/juraganmaterial.id/";
         contents.user = wjm;
       }
+
+      {
+        condition = "gitdir:~/work/24dev/";
+        contents.user = me;
+      }
+
+      {
+        condition = "gitdir:~/work/fap/";
+        contents.user = me;
+      }
     ];
   };
 

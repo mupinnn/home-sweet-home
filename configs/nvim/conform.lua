@@ -3,6 +3,7 @@ local conform = require("conform")
 local formatters = {
 	lua = { "stylua" },
 	nix = { "nixpkgs_fmt" },
+	["markdown.mdx"] = { "prettier" },
 }
 
 local ft_using_prettier = {

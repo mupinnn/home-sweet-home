@@ -74,6 +74,7 @@
             p.tree-sitter-bash
             p.tree-sitter-cmake
             p.tree-sitter-make
+            p.tree-sitter-php
           ]));
           config = toLuaFile ./configs/nvim/treesitter.lua;
         }

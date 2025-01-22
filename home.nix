@@ -6,6 +6,17 @@
   home.stateVersion = "22.11";
   programs.home-manager.enable = true;
 
+  nix = {
+    package = pkgs.nix;
+    settings = {
+      experimental-features = [ "nix-command" "flakes" ];
+    };
+    gc = {
+      automatic = true;
+      options = "--delete-older-than 30d";
+    };
+  };
+
   imports = [
     ./neovim.nix
     ./git.nix
@@ -23,6 +34,7 @@
     gnumake
     cmake
     (hiPrio clang)
+    android-tools
 
     # Overview
     neofetch
@@ -89,6 +101,11 @@
 
       setopt extended_glob
       unsetopt nomatch
+
+      if [ -z "$SSH_AUTH_SOCK" ] ; then
+        eval "$(ssh-agent -s)" > /dev/null
+        find ~/.ssh -name "id_*" ! -name "*.pub" -exec ssh-add -q {} \;
+      fi
     '';
 
     shellAliases = {
@@ -110,5 +127,12 @@
       ];
       theme = "robbyrussell";
     };
+  };
+
+  # ssh
+  # programs.ssh.addKeysToAgent = "yes";
+  programs.ssh = {
+    enable = true;
+    addKeysToAgent = "yes";
   };
 }

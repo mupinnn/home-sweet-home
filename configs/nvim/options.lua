@@ -8,3 +8,9 @@ vim.opt.softtabstop = 2
 vim.opt.autoindent = true
 vim.opt.smartindent = true
 vim.opt.showmode = false
+
+vim.filetype.add({
+	extension = {
+		mdx = "markdown.mdx",
+	},
+})
