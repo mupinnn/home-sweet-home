@@ -56,6 +56,7 @@
     gnupg
     curl
     wget
+    cowsay
   ];
 
   # nix-index (nix-locate) to easily find nix package by its name
