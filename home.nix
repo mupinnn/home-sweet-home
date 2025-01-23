@@ -18,7 +18,8 @@
   };
 
   imports = [
-    ./neovim.nix
+    # ./neovim.nix
+    ./nixvim.nix
     ./git.nix
   ];
 
