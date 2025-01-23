@@ -7,11 +7,12 @@
     viAlias = true;
     defaultEditor = true;
 
-    extraPackages = with pkgs; [
-      nixfmt-classic
-      # nodePackages.typescript
-      # nodePackages.typescript-language-server
-    ];
+    extraPackages = with pkgs;
+      [
+        nixfmt-classic
+        # nodePackages.typescript
+        # nodePackages.typescript-language-server
+      ];
 
     opts = {
       title = true;
@@ -82,12 +83,10 @@
 
       nvim-tree = {
         enable = true;
+        openOnSetup = true;
+        openOnSetupFile = true;
         disableNetrw = true;
         git = { ignore = false; };
-        hijackDirectories = {
-          enable = true;
-          autoOpen = true;
-        };
       };
 
       comment.enable = true;
@@ -101,7 +100,6 @@
         settings = {
           highlight.enable = true;
           indent.enable = true;
-          autotag.enable = true;
         };
         grammarPackages =
           builtins.map (x: pkgs.vimPlugins.nvim-treesitter.builtGrammars.${x}) [
