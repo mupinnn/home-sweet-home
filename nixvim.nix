@@ -197,6 +197,41 @@ fuzzy = true;
           gt.action = "lsp_type_definitions";
         };
       };
+
+      cmp_luasnip.enable = true;
+      cmp-nvim-lsp.enable = true;
+      luasnip.enable = true;
+      luasnip.fromVscode = [{}];
+      friendly-snippets.enable = true;
+      cmp = {
+        enable = true;
+        autoEnableSources = true;
+        settings = {
+          sources = [
+            { name = "nvim_lsp "; }
+            { name = "luasnip"; }
+            { name = "buffer"; }
+            { name = "path"; }
+          ];
+          snippet.expand = ''
+            function(args)
+              require('luasnip').lsp_expand(args.body)
+            end
+          '';
+          mapping = {
+            "<C-k>" = "cmp.mapping.select_prev_item()";
+            "<C-j>" = "cmp.mapping.select_next_item()";
+            "<C-b>" = "cmp.mapping.scroll_docs(-4)";
+	    "<C-f>" = "cmp.mapping.scroll_docs(4)";
+	    "<C-Space>" = "cmp.mapping(cmp.mapping.complete(), { 'i', 'c' })";
+	    "<C-y>" = "cmp.config.disable";
+	    "<C-e>" = "cmp.mapping({ i = cmp.mapping.abort(), c = cmp.mapping.close() })";
+            "<CR>" = "cmp.mapping.confirm({ select = true })";
+            "<S-Tab>" = "cmp.mapping(cmp.mapping.select_prev_item(), {'i', 's'})";
+            "<Tab>" = "cmp.mapping(cmp.mapping.select_next_item(), {'i', 's'})";
+          };
+        };
+      };
     };
   };
 }
