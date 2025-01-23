@@ -151,6 +151,52 @@ enable_close = true;
 	  "yaml"
 	];
       };
+
+      telescope = {
+        enable = true;
+        extensions = {
+          fzf-native.enable = true;
+          fzf-native.settings = {
+fuzzy = true;
+              override_generic_sorter = true;
+              override_file_sorter = true;
+              case_mode = "smart_case";
+
+          };
+        };
+        settings = {
+          pickers = {
+            find_files = {
+              find_command = ["rg" "--files" "--hidden" "--glob" "!**/.git/*"];
+            };
+          };
+                  };
+        keymaps = {
+          ff.options.desc = "Find by files";
+          ff.action = "find_files";
+
+          fg.options.desc = "Find by text";
+          fg.action = "live_grep";
+
+          fb.options.desc = "Find by current buffers";
+          fb.action = "buffers";
+
+          fh.options.desc = "Find by help tags";
+          fh.action = "help_tags";
+
+          gR.options.desc = "Show LSP references";
+          gR.action = "lsp_references";
+
+          gd.options.desc = "Show LSP definitions";
+          gd.action = "lsp_definitions";
+
+          gi.options.desc = "Show LSP implementations";
+          gi.action = "lsp_implementations";
+
+          gt.options.desc = "Show LSP type definitions";
+          gt.action = "lsp_type_definitions";
+        };
+      };
     };
   };
 }
