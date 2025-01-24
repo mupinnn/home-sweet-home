@@ -1,6 +1,27 @@
 { pkgs, ... }:
 
-{
+let
+  ft_using_prettier = [
+    "astro"
+    "css"
+    "html"
+    "javascript"
+    "javascriptreact"
+    "json"
+    "markdown"
+    "markdown.mdx"
+    "sass"
+    "scss"
+    "typescript"
+    "typescriptreact"
+    "vue"
+    "yaml"
+  ];
+  conform_prettier_sets = builtins.listToAttrs (map (lang: {
+    name = lang;
+    value = [ "prettier" ];
+  }) ft_using_prettier);
+in {
   programs.nixvim = {
     enable = true;
     vimAlias = true;
@@ -50,6 +71,17 @@
           silent = true;
           noremap = true;
         };
+      }
+
+      {
+        action.__raw = ''
+          function()
+            require("conform").format({ lsp_fallback = true, async = false, timeout_ms = 1000 })
+          end
+        '';
+        key = "<leader>f";
+        mode = [ "n" "v" ];
+        options = { desc = "Format file or range (in visual mode)"; };
       }
     ];
 
@@ -162,7 +194,6 @@
             override_generic_sorter = true;
             override_file_sorter = true;
             case_mode = "smart_case";
-
           };
         };
         settings = {
@@ -256,6 +287,22 @@
           tailwindcss.enable = true;
           ts_ls.enable = true;
           volar.enable = true;
+        };
+      };
+
+      conform-nvim = {
+        enable = true;
+        settings = {
+          format_on_save = {
+            lsp_fallback = true;
+            async = false;
+            timeout_ms = 1000;
+          };
+          formatters_by_ft = {
+            lua = [ "stylua" ];
+            nix = [ "nixfmt" ];
+            "_" = [ "trim_whitespace" ];
+          } // conform_prettier_sets;
         };
       };
     };
