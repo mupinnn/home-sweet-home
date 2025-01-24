@@ -1,22 +1,15 @@
-{ pkgs, ... }:
-
 let
   me = {
     name = "Ahmad Muwaffaq";
     email = "itsmupin@gmail.com";
-    core = {
-      sshCommand = "ssh -i ~/.ssh/id_ed25519-personal";
-    };
+    core = { sshCommand = "ssh -i ~/.ssh/id_ed25519-personal"; };
   };
   wjm = {
     name = "Ahmad Muwaffaq";
     email = "afaqih@juraganmaterial.id";
-    core = {
-      sshCommand = "ssh -i ~/.ssh/id_ed25519-jm";
-    };
+    core = { sshCommand = "ssh -i ~/.ssh/id_ed25519-jm"; };
   };
-in
-{
+in {
   programs.git = {
     enable = true;
     extraConfig = {
@@ -24,11 +17,9 @@ in
       core = { editor = "nano"; };
       pull = { ff = "only"; };
       push = { autoSetupRemote = true; };
-      url = {
-        "git@github.com:" = {
-          insteadOf = "https://github.com/";
-        };
-      };
+      url = { "git@github.com:" = { insteadOf = "https://github.com/"; }; };
+      diff.tool = "vimdiff";
+      difftool.prompt = false;
     };
     includes = [
       {

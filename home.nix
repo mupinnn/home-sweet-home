@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   home.username = "mupin";
@@ -8,20 +8,14 @@
 
   nix = {
     package = pkgs.nix;
-    settings = {
-      experimental-features = [ "nix-command" "flakes" ];
-    };
+    settings = { experimental-features = [ "nix-command" "flakes" ]; };
     gc = {
       automatic = true;
       options = "--delete-older-than 30d";
     };
   };
 
-  imports = [
-    # ./neovim.nix
-    ./nixvim.nix
-    ./git.nix
-  ];
+  imports = [ ./nixvim.nix ./git.nix ./tmux.nix ];
 
   # Packages
   home.packages = with pkgs; [
@@ -68,26 +62,6 @@
     enableZshIntegration = true;
   };
 
-  # Tmux
-  programs.tmux = {
-    enable = true;
-    mouse = true;
-    prefix = "C-a";
-    terminal = "xterm-256color";
-    keyMode = "vi";
-    plugins = with pkgs.tmuxPlugins; [
-      sensible
-      pain-control
-      yank
-      prefix-highlight
-      better-mouse-mode
-    ];
-
-    extraConfig = ''
-      set-option -ga terminal-overrides ",xterm-256color:Tc"
-    '';
-  };
-
   # zsh
   programs.zsh = {
     enable = true;
@@ -108,6 +82,8 @@
         eval "$(ssh-agent -s)" > /dev/null
         find ~/.ssh -name "id_*" ! -name "*.pub" -exec ssh-add -q {} \;
       fi
+
+      export DISABLE_AUTO_TITLE='true'
     '';
 
     shellAliases = {
@@ -120,13 +96,7 @@
 
     oh-my-zsh = {
       enable = true;
-      plugins = [
-        "git"
-        "fnm"
-        "npm"
-        "gh"
-        "command-not-found"
-      ];
+      plugins = [ "git" "fnm" "npm" "gh" "command-not-found" ];
       theme = "robbyrussell";
     };
   };

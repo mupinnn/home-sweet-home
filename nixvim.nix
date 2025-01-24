@@ -115,10 +115,11 @@ in {
 
       nvim-tree = {
         enable = true;
-        openOnSetup = true;
-        openOnSetupFile = true;
         disableNetrw = true;
         git = { ignore = false; };
+        view.width = 25;
+        respectBufCwd = true;
+        autoReloadOnWrite = true;
       };
 
       comment.enable = true;
@@ -305,6 +306,8 @@ in {
           } // conform_prettier_sets;
         };
       };
+
+      dashboard.enable = true;
     };
   };
 }
