@@ -34,6 +34,17 @@ let
       ];
     };
   };
+
+  tmux-kanagawa = pkgs.tmuxPlugins.mkTmuxPlugin {
+    pluginName = "tmux-kanagawa";
+    version = "unstable-2025-01-24";
+    src = pkgs.fetchFromGitHub {
+      owner = "Nybkox";
+      repo = "tmux-kanagawa";
+      rev = "0d2db8d95e1b74643a06802043c7000a79ba0a0a";
+      sha256 = "sha256-9S4HQHuECGLPLdPishmwEO0twdeQ6mZQfIMNFFDkgQ8=";
+    };
+  };
 in {
   home.shellAliases = {
     tme = "tmuxp load ${
@@ -56,6 +67,13 @@ in {
       yank
       prefix-highlight
       better-mouse-mode
+
+      {
+        plugin = tmux-kanagawa;
+        extraConfig = ''
+          set -g @kanagawa-theme "wave"
+        '';
+      }
     ];
 
     extraConfig = ''
