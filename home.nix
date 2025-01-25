@@ -6,6 +6,8 @@
   home.stateVersion = "22.11";
   programs.home-manager.enable = true;
 
+  nixpkgs.overlays = [ (import ./overlays/nvim-lspconfig.nix) ];
+
   nix = {
     package = pkgs.nix;
     settings = { experimental-features = [ "nix-command" "flakes" ]; };
