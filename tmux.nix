@@ -36,7 +36,7 @@ let
   };
 
   tmux-kanagawa = pkgs.tmuxPlugins.mkTmuxPlugin {
-    pluginName = "tmux-kanagawa";
+    pluginName = "kanagawa";
     version = "unstable-2025-01-24";
     src = pkgs.fetchFromGitHub {
       owner = "Nybkox";
@@ -61,23 +61,21 @@ in {
     prefix = "C-a";
     terminal = "tmux-256color";
     keyMode = "vi";
+    clock24 = true;
+    historyLimit = 10000;
+
     plugins = with pkgs.tmuxPlugins; [
       sensible
       pain-control
       yank
       prefix-highlight
       better-mouse-mode
-
-      {
-        plugin = tmux-kanagawa;
-        extraConfig = ''
-          set -g @kanagawa-theme "wave"
-        '';
-      }
+      tmux-kanagawa
     ];
 
     extraConfig = ''
       set-option -ga terminal-overrides ",xterm-256color:Tc"
+      set-option -g status-position top
     '';
   };
 

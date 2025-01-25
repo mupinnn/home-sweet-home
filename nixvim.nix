@@ -28,12 +28,20 @@ in {
     viAlias = true;
     defaultEditor = true;
 
-    extraPackages = with pkgs;
-      [
-        nixfmt-classic
-        # nodePackages.typescript
-        # nodePackages.typescript-language-server
-      ];
+    extraPackages = with pkgs; [
+      nixfmt-classic
+      stylua
+      nodePackages.prettier
+      # nodePackages.typescript
+      # nodePackages.typescript-language-server
+    ];
+
+    extraPlugins = with pkgs.vimPlugins; [ lsp-progress-nvim ];
+
+    extraConfigLuaPre = ''
+      local lsp_progress = require("lsp-progress");
+      lsp_progress.setup()
+    '';
 
     opts = {
       title = true;
@@ -46,11 +54,29 @@ in {
       autoindent = true;
       smartindent = true;
       showmode = false;
+      wrap = false;
     };
 
     filetype = { extension = { "mdx" = "markdown.mdx"; }; };
 
     colorschemes.kanagawa.enable = true;
+
+    clipboard.register = "unnamed";
+
+    globals = {
+      loaded_netrw = 1;
+      loaded_netrwPlugin = 1;
+    };
+
+    autoCmd = [{
+      event = [ "User" ];
+      pattern = "LspProgressStatusUpdated";
+      callback.__raw = ''
+        function()
+          require("lualine").refresh()
+        end
+      '';
+    }];
 
     keymaps = [
       {
@@ -90,23 +116,99 @@ in {
         enable = true;
         settings = {
           options = {
-            icons_enabled = true;
-            theme = "papercolor_dark";
-            always_divide_middle = true;
             globalstatus = true;
-            refresh = {
-              statusline = 1000;
-              tabline = 1000;
-              winbar = 1000;
+            component_separators = "";
+            section_separators = {
+              left = "";
+              right = "";
             };
           };
           sections = {
             lualine_a = [ "mode" ];
-            lualine_b = [ "branch" { icon = null; } ];
-            lualine_c = [ "filename" ];
-            lualine_x = [ "filetype" "encoding" "fileformat" ];
-            lualine_y = [ "progress" ];
+            lualine_b = [{
+              __unkeyed-1 = "filename";
+              file_status = true;
+              newfile_status = true;
+              path = 4;
+            }];
+            lualine_c = [ "branch" ];
+            lualine_x = [
+              {
+                __unkeyed-1 = "diff";
+                source.__raw = ''
+                  function()
+                    local gitsigns = vim.b.gitsigns_status_dict
+                    if (gitsigns) then
+                      return {
+                        added = gitsigns.added,
+                        modified = gitsigns.changed,
+                        removed = gitsigns.removed
+                      }
+                    end
+                  end
+                '';
+                symbols = {
+                  added = " ";
+                  modified = " ";
+                  removed = " ";
+                };
+              }
+
+              {
+                __unkeyed-1 = "diagnostics";
+                sections = [ "error" "warn" "info" "hint" ];
+                symbols = {
+                  error = " ";
+                  warn = " ";
+                  info = " ";
+                  hint = " ";
+                };
+              }
+
+              {
+                __unkeyed-1.__raw = ''
+                  function()
+                    return lsp_progress.progress({
+                      max_size = 50,
+                      format = function(client_messages)
+                        local sign = "[  LSP]"
+                        if #client_messages > 0 then
+                          return sign .. " " .. table.concat(client_messages, " ")
+                        end
+
+                        local clients = vim.lsp.get_active_clients({ bufnr = 0 })
+                        if (next(clients) == nil) then
+                          return "No LSP"
+                        end
+
+                        local client_names = {}
+                        for _, client in pairs(clients) do
+                          table.insert(client_names, client.name)
+                        end
+
+                        return sign .. " " .. table.concat(client_names, ", ")
+                      end
+                    })
+                  end
+                '';
+              }
+            ];
+            lualine_y = [
+              {
+                __unkeyed-1 = "filetype";
+                icon_only = true;
+              }
+              "progress"
+            ];
             lualine_z = [ "location" ];
+          };
+          inactive_winbar = {
+            lualine_a = [ "filename" ];
+            lualine_b = [ "location" ];
+            lualine_c = [ "" ];
+            lualine_x = [ "" ];
+            lualine_y = [ "" ];
+            lualine_z = [ "" ];
           };
         };
       };
@@ -115,15 +217,22 @@ in {
 
       nvim-tree = {
         enable = true;
-        disableNetrw = true;
-        git = { ignore = false; };
+        disableNetrw = false;
+        hijackNetrw = true;
+        hijackCursor = true;
+        respectBufCwd = false;
+        syncRootWithCwd = true;
+
+        git.ignore = false;
+        filters.dotfiles = false;
         view.width = 25;
-        respectBufCwd = true;
-        autoReloadOnWrite = true;
       };
 
       comment.enable = true;
+
       indent-blankline.enable = true;
+      indent-blankline.settings.exclude.filetypes = [ "dashboard" ];
+
       nvim-autopairs.enable = true;
       gitsigns.enable = true;
       colorizer.enable = true;
@@ -308,6 +417,37 @@ in {
       };
 
       dashboard.enable = true;
+      dashboard.settings.config = {
+        shortcut = [{
+          icon = "[  Github]";
+          desc = "@mupinnn";
+        }];
+        header = [
+          "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"
+          "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"
+          "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢟⠟⣛⢫⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"
+          "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢏⠎⠄⢅⠑⡱⡹⡌⡎⣏⢿⣻⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"
+          "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⣟⡯⡯⠢⢐⠠⠑⠐⠨⠠⠑⡈⠌⡾⡽⡽⡽⣽⢽⣺⢽⡽⣞⣯⢿⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"
+          "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢿⡻⣵⣫⢷⢝⠎⡐⠄⠂⠈⠄⠂⠐⠄⡂⣕⢯⢯⢯⢯⣗⣯⢯⡯⣯⣗⣯⢯⡿⣽⣻⢿⣿⣿⣿⣿⣿⣿⣿"
+          "⣿⣿⣿⣿⣿⣿⢿⣻⢝⣮⣻⡺⣵⡳⡽⣝⢦⢔⢬⢄⢥⡢⡢⣕⢼⣜⣮⡯⣿⣽⣻⡾⣽⢯⣟⣷⣻⣾⣻⣽⢷⣟⣯⣷⢿⣻⣿⣿⣿⣿"
+          "⣿⣿⣿⣻⡽⡾⣽⣺⣽⣞⣾⡽⣾⢽⣽⢾⡯⣿⢯⡿⣽⢯⣟⣯⣿⣳⣯⡿⣷⢯⣷⢿⣻⣯⢿⡽⣗⣯⡿⣾⣻⣽⣻⣾⣻⣯⢿⣿⣿⣿"
+          "⣿⣿⢾⣾⣻⣟⣯⣿⢾⣯⡷⣟⣿⢯⣟⣯⡿⣯⣟⣯⣿⣻⣽⢷⣯⢷⢿⡽⣯⢿⣽⣻⢽⣞⢿⢽⢯⣗⣟⢽⡳⡯⣗⣿⣺⣽⣻⣞⣿⣿"
+          "⣿⣿⣻⣽⣯⣿⣽⡾⣟⣷⢿⣻⡽⡿⡽⣗⡿⡽⣞⣗⣟⣞⡾⣽⣺⢽⣫⢟⣞⣗⢷⣝⣗⡽⡽⡵⣳⣳⡳⣽⡺⣝⣞⢞⣽⢾⣽⢾⣻⣿"
+          "⣿⣯⢿⢽⣺⣳⣳⣻⢽⣺⢯⢯⢯⢿⣝⣗⡯⣯⣗⢷⣳⣳⣻⣺⡺⣽⣺⢽⣺⢮⣗⣗⢷⢽⣝⣞⣗⢷⢽⣺⡺⣵⡳⣫⢯⡿⣞⣿⣻⣿"
+          "⣿⣿⢽⢽⣺⢵⣻⣺⢽⣺⢽⢯⣟⣗⣗⣯⣻⣺⣺⢽⣺⣺⡺⣮⣻⡺⣮⣻⣺⣳⣳⢽⢽⢵⣳⡳⣳⣫⢗⡷⣽⣪⢯⣳⢯⢿⡽⣞⣿⣿"
+          "⣿⣿⢯⣟⡾⡽⣞⡾⣽⣺⢽⡽⣺⣺⣞⣞⡾⡵⣯⣻⣺⣺⣝⣞⣮⣟⣞⣞⣾⣺⢾⣽⡽⣗⣷⣟⣷⢿⣽⣯⡷⣟⣯⡿⣽⢿⡽⣯⢿⣿"
+          "⣿⣿⣻⢮⢯⡯⡷⡯⣗⣯⢯⣯⣟⣾⢾⣺⣽⣯⣷⢷⣷⡷⣿⢾⡷⣿⣽⣯⣿⣽⢿⣳⣿⣟⣯⣿⢾⣟⣷⣯⢿⣯⡷⣿⣻⣽⣻⣽⢿⣿"
+          "⣿⣿⣯⣿⣟⣿⢿⡿⣟⣿⣻⣽⣯⡿⣟⣿⣽⣾⣟⣿⢷⡿⣟⣿⣻⡿⣾⢷⡿⣾⢿⣻⡷⣿⣽⡾⣿⣽⢾⣽⣻⣞⣯⣟⡷⣯⣷⣻⣿⣿"
+          "⣿⣿⣿⣽⣯⣿⢿⣻⣿⣻⣿⣽⣷⢿⡿⣯⡿⣾⣻⡾⣟⣿⣻⣽⣯⢿⣽⢿⡽⣟⣿⣽⣻⡷⣯⣿⣳⣟⣯⣯⡷⣟⣷⣻⡽⣷⣻⣞⣿⣿"
+          "⣿⣿⣿⣯⣿⣾⣿⣟⣯⣿⡾⣷⣟⣿⣻⣯⡿⣯⡿⣽⢿⣽⣻⣾⡽⣿⡽⣟⣟⣯⢷⣻⣳⣻⢽⣺⡳⡯⣳⣳⡫⣗⢗⡵⣟⣷⣳⢯⣿⣿"
+          "⣿⣿⣿⣷⢿⡷⣿⣽⣟⣷⡿⣯⣿⡽⣟⣾⣻⢯⣟⡯⡿⣝⣗⣗⢯⢗⡯⣻⡺⡺⣝⢞⢮⢮⡳⡳⣝⢮⡳⡵⣝⢮⢳⢽⣳⣻⣺⣿⣿⣿"
+          "⣿⣿⣿⣻⣻⡻⡯⣗⢿⢽⢽⣝⢮⢯⣳⡳⡽⣕⣗⢽⢝⢮⡺⡼⣝⢵⡫⣞⣞⣝⢮⣫⡳⡳⣝⢝⢮⡳⣝⢞⡎⣗⢝⣽⣺⣗⡷⣿⣿⣿"
+          "⣿⣿⣿⣞⢮⢯⢯⡫⡯⣳⡳⡽⣹⢕⢷⢝⣝⢮⢮⣫⣫⡳⡽⢵⢝⣕⢯⡺⡲⣕⡳⡕⡵⡝⡎⣏⢧⢫⣎⣧⣳⣱⣧⣷⣷⣷⣿⣿⣿⣿"
+          "⣿⣿⣿⡺⡽⣕⢯⢞⡽⣺⢪⢯⡺⡹⣕⢯⢎⡗⡗⣕⢮⢺⢪⢳⢣⡳⣕⣝⣜⣦⣧⣷⣷⣷⣿⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"
+          "⣿⣿⣿⢽⣹⢪⢏⡗⣝⢎⢗⢵⢹⡩⣎⣮⣧⣧⣯⣮⣾⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"
+          "⣿⣿⣿⣷⣷⣯⣷⣿⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"
+        ];
+      };
     };
   };
 }

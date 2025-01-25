@@ -1,5 +1,6 @@
 {
-  description = "mupin's system configuration with Nix and `home-manager` using Flakes";
+  description =
+    "mupin's system configuration with Nix and `home-manager` using Flakes";
 
   inputs = {
     nixpkgs.url = "github:NixOs/nixpkgs/nixpkgs-unstable";
@@ -19,10 +20,7 @@
     homeConfigurations = {
       mupin = home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs { system = "x86_64-linux"; };
-        modules = [
-          nixvim.homeManagerModules.nixvim
-          ./home.nix
-        ];
+        modules = [ nixvim.homeManagerModules.nixvim ./home.nix ];
       };
     };
   };
