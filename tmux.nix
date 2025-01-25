@@ -3,8 +3,8 @@
 let
   tmuxWorkspaces = {
     me = {
-      session_name = "[ME] Personal";
-      shell_command_before = [ "cd ~/work/personal" ];
+      session_name = "personal";
+      start_directory = "~/work/personal";
       windows = [
         {
           window_name = "Editor";
@@ -20,7 +20,7 @@ let
 
     work = {
       session_name = "work";
-      shell_command_before = [ "cd ~/work" ];
+      start_directory = "~/work";
       windows = [
         {
           window_name = "Editor";
@@ -76,6 +76,10 @@ in {
     extraConfig = ''
       set-option -ga terminal-overrides ",xterm-256color:Tc"
       set-option -g status-position top
+
+      # kanagawa theme
+      set -g @kanagawa-plugins "attached-clients battery cwd network network-bandwidth time"
+      set -g @kanagawa-no-batter-label 
     '';
   };
 
