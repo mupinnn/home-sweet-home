@@ -70,16 +70,19 @@ in {
       yank
       prefix-highlight
       better-mouse-mode
-      tmux-kanagawa
+
+      {
+        plugin = tmux-kanagawa;
+        extraConfig = ''
+          set -g @kanagawa-plugins "attached-clients battery cwd network network-bandwidth time"
+          set -g @kanagawa-no-battery-label " "
+        '';
+      }
     ];
 
     extraConfig = ''
       set-option -ga terminal-overrides ",xterm-256color:Tc"
       set-option -g status-position top
-
-      # kanagawa theme
-      set -g @kanagawa-plugins "attached-clients battery cwd network network-bandwidth time"
-      set -g @kanagawa-no-batter-label 
     '';
   };
 
