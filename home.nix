@@ -6,8 +6,6 @@
   home.stateVersion = "22.11";
   programs.home-manager.enable = true;
 
-  nixpkgs.overlays = [ (import ./overlays/nvim-lspconfig.nix) ];
-
   nix = {
     package = pkgs.nix;
     settings = { experimental-features = [ "nix-command" "flakes" ]; };
@@ -54,6 +52,7 @@
     curl
     wget
     cowsay
+    hello
   ];
 
   # nix-index (nix-locate) to easily find nix package by its name

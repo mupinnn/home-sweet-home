@@ -19,7 +19,18 @@
 
     homeConfigurations = {
       mupin = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs { system = "x86_64-linux"; };
+        pkgs = import nixpkgs {
+          system = "x86_64-linux";
+          # overlays = [
+          #   (final: prev: {
+          #     hello = final.writeShellScriptBin "hello" ''
+          #       ${prev.hello}/bin/hello -g "hellorld" "$@"
+          #     '';
+          #   })
+          #
+          #   (import ./overlays/nvim-lspconfig.nix)
+          # ];
+        };
         modules = [ nixvim.homeManagerModules.nixvim ./home.nix ];
       };
     };

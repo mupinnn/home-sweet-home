@@ -382,6 +382,7 @@ in {
 
       lsp = {
         enable = true;
+        package = pkgs.vimPlugins.nvim-lspconfig;
         servers = {
           astro.enable = true;
           bashls.enable = true;
