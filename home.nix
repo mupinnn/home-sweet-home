@@ -39,6 +39,7 @@
     # Development
     jq
     android-tools
+    # inputs.devenv.packages."${pkgs.system}".devenv
 
     # Overview
     neofetch
@@ -60,6 +61,11 @@
     curl
     wget
   ];
+
+  # programs.direnv = {
+  #   enable = true;
+  #   nix-direnv.enable = true;
+  # };
 
   # nix-index (nix-locate) to easily find nix package by its name
   programs.nix-index = {

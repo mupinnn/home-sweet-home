@@ -12,10 +12,16 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    devenv = {
+      url = "github:cachix/devenv";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { home-manager, nixvim, ... }@inputs:
+  outputs = { self, home-manager, nixvim, ... }@inputs:
     let
+      inherit (self) outputs;
+
       system = "x86_64-linux";
       pkgs = inputs.nixpkgs.legacyPackages.${system};
     in {
@@ -24,6 +30,7 @@
           inherit pkgs;
 
           modules = [ nixvim.homeManagerModules.nixvim ./home.nix ];
+          extraSpecialArgs = { inherit inputs outputs; };
         };
       };
 
