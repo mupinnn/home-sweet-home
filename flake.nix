@@ -26,5 +26,7 @@
           modules = [ nixvim.homeManagerModules.nixvim ./home.nix ];
         };
       };
+
+      devShells = import ./devShells.nix { inherit pkgs; };
     };
 }

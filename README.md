@@ -2,7 +2,7 @@
 
 Home and development environment with Nix and home-manager to easily manage my machine(s).
 
-## Usage
+## Setup
 
 1. Install Nix https://nixos.org/download/#download-nix
 2. Setup by cloning this repository
@@ -21,6 +21,24 @@ git clone git@github.com:mupinnn/home-sweet-home.git ~/.config/home-manager
    - `$ echo ~/.nix-profile/bin/zsh | sudo tee -a /etc/shells`
    - `$ sudo usermod -s ~/.nix-profile/bin/zsh $USER`
 6. Done!
+
+## Usage
+
+### Development Environment
+
+See [./devShells.nix](`devShells.nix` definitions) to see the list of supported development environment.
+
+- `nodejs${VERSION}` - Node.js environment with pnpm and bun.
+- `ccpp` - C/C++ environment with `clang` and `gcc13` with the support of `cmake`, `make`, and `clang-tools`.
+
+```console
+nix develop ~/.config/home-manager#devShells.ccpp -c $SHELL
+```
+
+```console
+nix develop ~/.config/home-manager#devShells.nodejs18 -c $SHELL
+nix develop ~/.config/home-manager#devShells.nodejs20 -c $SHELL
+```
 
 ## Acknowledgement
 

@@ -38,14 +38,6 @@
   home.packages = with pkgs; [
     # Development
     jq
-    pkgs.nodePackages.pnpm
-    cargo
-    rustc
-    gcc13
-    bun
-    gnumake
-    cmake
-    (hiPrio clang)
     android-tools
 
     # Overview
@@ -62,14 +54,11 @@
 
     # Tools
     bat
-    fnm
     tree
     tree-sitter
     gnupg
     curl
     wget
-    cowsay
-    hello
   ];
 
   # nix-index (nix-locate) to easily find nix package by its name
@@ -89,10 +78,6 @@
     dotDir = ".config/zsh";
 
     initExtra = ''
-      # fnm
-      eval "`fnm env`"
-      eval "$(fnm env --use-on-cd)"
-
       setopt extended_glob
       unsetopt nomatch
 
@@ -114,7 +99,7 @@
 
     oh-my-zsh = {
       enable = true;
-      plugins = [ "git" "fnm" "npm" "gh" "command-not-found" ];
+      plugins = [ "git" "npm" "gh" "command-not-found" ];
       theme = "robbyrussell";
     };
   };
