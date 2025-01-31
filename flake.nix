@@ -14,25 +14,17 @@
     };
   };
 
-  outputs = { nixpkgs, home-manager, nixvim, ... }: {
-    defaultPackage.x86_64-linux = home-manager.defaultPackage.x86_64-linux;
+  outputs = { home-manager, nixvim, ... }@inputs:
+    let
+      system = "x86_64-linux";
+      pkgs = inputs.nixpkgs.legacyPackages.${system};
+    in {
+      homeConfigurations = {
+        mupin = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
 
-    homeConfigurations = {
-      mupin = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs {
-          system = "x86_64-linux";
-          # overlays = [
-          #   (final: prev: {
-          #     hello = final.writeShellScriptBin "hello" ''
-          #       ${prev.hello}/bin/hello -g "hellorld" "$@"
-          #     '';
-          #   })
-          #
-          #   (import ./overlays/nvim-lspconfig.nix)
-          # ];
+          modules = [ nixvim.homeManagerModules.nixvim ./home.nix ];
         };
-        modules = [ nixvim.homeManagerModules.nixvim ./home.nix ];
       };
     };
-  };
 }

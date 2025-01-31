@@ -15,6 +15,23 @@
     };
   };
 
+  nixpkgs = {
+    overlays = [
+      # (final: prev: {
+      #   hello = final.writeShellScriptBin "hello" ''
+      #     ${prev.hello}/bin/hello -g "hellorld" "$@"
+      #   '';
+      # })
+      #
+      # ./overlays/nvim-lspconfig.nix
+    ];
+
+    config = {
+      allowUnfree = true;
+      allowUnfreePredicate = _: true;
+    };
+  };
+
   imports = [ ./nixvim.nix ./git.nix ./tmux.nix ];
 
   # Packages
