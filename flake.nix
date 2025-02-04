@@ -18,7 +18,7 @@
     };
   };
 
-  outputs = { self, home-manager, nixvim, ... }@inputs:
+  outputs = { self, home-manager, nixvim, devenv, ... }@inputs:
     let
       inherit (self) outputs;
 
@@ -34,6 +34,7 @@
         };
       };
 
-      devShells = import ./devShells.nix { inherit pkgs; };
+      devShells.${system} =
+        import ./devShells.nix { inherit pkgs devenv inputs outputs; };
     };
 }
