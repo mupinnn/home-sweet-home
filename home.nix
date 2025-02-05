@@ -65,7 +65,7 @@
   programs.direnv = {
     enable = true;
     enableBashIntegration = true;
-    enableZshIntegration = true;
+    enableZshIntegration = false;
     nix-direnv.enable = true;
   };
 
@@ -86,6 +86,7 @@
 
     initExtra = ''
       setopt extended_glob
+      setopt PROMPT_SUBST
       unsetopt nomatch
 
       if [ -z "$SSH_AUTH_SOCK" ] ; then
@@ -93,7 +94,17 @@
         find ~/.ssh -name "id_*" ! -name "*.pub" -exec ssh-add -q {} \;
       fi
 
+      # direnv.enableZshIntegration
+      eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
+
+      show_nix_shell() {
+        if [ -n "$IN_NIX_SHELL" ] ; then
+          echo "( $(basename $IN_NIX_SHELL)) "
+        fi
+      }
+
       export DISABLE_AUTO_TITLE='true'
+      export PS1=$PS1'$(show_nix_shell)'
     '';
 
     shellAliases = {
