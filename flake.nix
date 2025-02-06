@@ -34,6 +34,10 @@
         };
       };
 
+      packages.${system} = {
+        pgsql-devenv-up = self.devShells.${system}.pgsql.config.procfileScript;
+      };
+
       devShells.${system} =
         import ./devShells.nix { inherit pkgs devenv inputs outputs; };
     };
