@@ -16,6 +16,14 @@
       url = "github:cachix/devenv";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    process-compose-flake = {
+      url = "github:Platonic-Systems/process-compose-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    services-flake = {
+      url = "github:juspay/services-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, home-manager, nixvim, devenv, ... }@inputs:
@@ -34,9 +42,9 @@
         };
       };
 
-      packages.${system} = {
-        pgsql-devenv-up = self.devShells.${system}.pgsql.config.procfileScript;
-      };
+      # packages.${system} = {
+      #   pgsql-devenv-up = self.devShells.${system}.pgsql.config.procfileScript;
+      # };
 
       devShells.${system} =
         import ./devShells.nix { inherit pkgs devenv inputs outputs; };
