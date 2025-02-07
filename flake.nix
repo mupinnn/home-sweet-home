@@ -16,14 +16,8 @@
       url = "github:cachix/devenv";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    process-compose-flake = {
-      url = "github:Platonic-Systems/process-compose-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    services-flake = {
-      url = "github:juspay/services-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
+    services-flake.url = "github:juspay/services-flake";
   };
 
   outputs = { self, home-manager, nixvim, devenv, ... }@inputs:
@@ -32,6 +26,15 @@
 
       system = "x86_64-linux";
       pkgs = inputs.nixpkgs.legacyPackages.${system};
+
+      pgsqlServices = (import inputs.process-compose-flake.lib {
+        inherit pkgs;
+      }).evalModules {
+        modules = [
+          inputs.services-flake.processComposeModules.default
+          { services.postgres."pg1".enable = true; }
+        ];
+      };
     in {
       homeConfigurations = {
         mupin = home-manager.lib.homeManagerConfiguration {
@@ -42,11 +45,16 @@
         };
       };
 
+      # There is an active issue regarding `devenv up` command for multiple shells setup
+      # @see https://github.com/cachix/devenv/issues/1178
       # packages.${system} = {
       #   pgsql-devenv-up = self.devShells.${system}.pgsql.config.procfileScript;
       # };
 
-      devShells.${system} =
-        import ./devShells.nix { inherit pkgs devenv inputs outputs; };
+      packages.${system} = { pgsql = pgsqlServices.config.outputs.package; };
+
+      devShells.${system} = import ./devShells.nix {
+        inherit pkgs devenv inputs outputs pgsqlServices;
+      };
     };
 }
