@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, self, ... }:
 
 {
   home.username = "mupin";
@@ -39,6 +39,7 @@
     # Development
     jq
     android-tools
+    devenv
 
     # Overview
     neofetch
