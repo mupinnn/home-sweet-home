@@ -39,7 +39,6 @@
     # Development
     jq
     android-tools
-    # inputs.devenv.packages."${pkgs.system}".devenv
 
     # Overview
     neofetch

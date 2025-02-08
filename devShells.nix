@@ -1,4 +1,4 @@
-{ pkgs, devenv, inputs, pgsqlServices, ... }:
+{ pkgs, inputs, devenv, servicesModules, ... }:
 
 let
   mkNodeJsShell = name:
@@ -32,27 +32,6 @@ in {
   };
 
   pgsql = pkgs.mkShell {
-    inputsFrom = [ pgsqlServices.config.services.outputs.devShell ];
+    inputsFrom = [ servicesModules.pgsql.config.services.outputs.devShell ];
   };
-
-  # pgsql = devenv.lib.mkShell {
-  #   inherit inputs pkgs;
-  #
-  #   modules = [{
-  #     env = {
-  #       DBNAME = "our-db";
-  #       DBUSER = builtins.getEnv "USER";
-  #       HOSTNAME = "localhost";
-  #       DBPORT = 5432;
-  #     };
-  #
-  #     services.postgres = {
-  #       enable = true;
-  #       package = pkgs.postgresql_15;
-  #       port = 5432;
-  #       listen_addresses = "127.0.0.1";
-  #       initialDatabases = [{ name = "our-db"; }];
-  #     };
-  #   }];
-  # };
 } // nodeJsShells

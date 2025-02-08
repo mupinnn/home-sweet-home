@@ -20,28 +20,35 @@
     services-flake.url = "github:juspay/services-flake";
   };
 
-  outputs = { self, home-manager, nixvim, devenv, ... }@inputs:
+  outputs = { self, home-manager, nixvim, devenv, nixpkgs, process-compose-flake
+    , services-flake, ... }@inputs:
     let
-      inherit (self) outputs;
+      inherit self;
 
-      system = "x86_64-linux";
-      pkgs = inputs.nixpkgs.legacyPackages.${system};
-
-      pgsqlServices = (import inputs.process-compose-flake.lib {
-        inherit pkgs;
-      }).evalModules {
-        modules = [
-          inputs.services-flake.processComposeModules.default
-          { services.postgres."pg1".enable = true; }
-        ];
-      };
+      supportedSystems = [ "x86_64-linux" ];
     in {
+      lib.forAllSystems = f:
+        nixpkgs.lib.genAttrs supportedSystems (system:
+          f rec {
+            pkgs = nixpkgs.legacyPackages.${system};
+
+            servicesModules = {
+              pgsql = (import process-compose-flake.lib {
+                inherit pkgs;
+              }).evalModules {
+                modules = [
+                  services-flake.processComposeModules.default
+                  { services.postgres."pg1".enable = true; }
+                ];
+              };
+            };
+          });
+
       homeConfigurations = {
         mupin = home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-
+          pkgs = nixpkgs.legacyPackages.${builtins.elemAt supportedSystems 0};
           modules = [ nixvim.homeManagerModules.nixvim ./home.nix ];
-          extraSpecialArgs = { inherit inputs outputs; };
+          extraSpecialArgs = { inherit self; };
         };
       };
 
@@ -51,10 +58,11 @@
       #   pgsql-devenv-up = self.devShells.${system}.pgsql.config.procfileScript;
       # };
 
-      packages.${system} = { pgsql = pgsqlServices.config.outputs.package; };
+      packages = self.lib.forAllSystems ({ servicesModules, ... }: {
+        pgsql = servicesModules.pgsql.config.outputs.package;
+      });
 
-      devShells.${system} = import ./devShells.nix {
-        inherit pkgs devenv inputs outputs pgsqlServices;
-      };
+      devShells = self.lib.forAllSystems ({ servicesModules, pkgs, ... }:
+        import ./devShells.nix { inherit pkgs devenv servicesModules inputs; });
     };
 }
