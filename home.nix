@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, self, ... }:
 
 {
   home.username = "mupin";
@@ -15,21 +15,31 @@
     };
   };
 
+  nixpkgs = {
+    overlays = [
+      # (final: prev: {
+      #   hello = final.writeShellScriptBin "hello" ''
+      #     ${prev.hello}/bin/hello -g "hellorld" "$@"
+      #   '';
+      # })
+      #
+      # ./overlays/nvim-lspconfig.nix
+    ];
+
+    config = {
+      allowUnfree = true;
+      allowUnfreePredicate = _: true;
+    };
+  };
+
   imports = [ ./nixvim.nix ./git.nix ./tmux.nix ];
 
   # Packages
   home.packages = with pkgs; [
     # Development
     jq
-    pkgs.nodePackages.pnpm
-    cargo
-    rustc
-    gcc13
-    bun
-    gnumake
-    cmake
-    (hiPrio clang)
     android-tools
+    devenv
 
     # Overview
     neofetch
@@ -45,21 +55,24 @@
 
     # Tools
     bat
-    fnm
     tree
     tree-sitter
     gnupg
     curl
     wget
-    cowsay
-    hello
   ];
+
+  programs.direnv = {
+    enable = true;
+    enableBashIntegration = true;
+    enableZshIntegration = false;
+    nix-direnv.enable = true;
+  };
 
   # nix-index (nix-locate) to easily find nix package by its name
   programs.nix-index = {
     enable = true;
     enableBashIntegration = true;
-    enableFishIntegration = true;
     enableZshIntegration = true;
   };
 
@@ -72,11 +85,8 @@
     dotDir = ".config/zsh";
 
     initExtra = ''
-      # fnm
-      eval "`fnm env`"
-      eval "$(fnm env --use-on-cd)"
-
       setopt extended_glob
+      setopt PROMPT_SUBST
       unsetopt nomatch
 
       if [ -z "$SSH_AUTH_SOCK" ] ; then
@@ -84,7 +94,17 @@
         find ~/.ssh -name "id_*" ! -name "*.pub" -exec ssh-add -q {} \;
       fi
 
+      # direnv.enableZshIntegration
+      eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
+
+      show_nix_shell() {
+        if [ -n "$IN_NIX_SHELL" ] ; then
+          echo "( $(basename $IN_NIX_SHELL)) "
+        fi
+      }
+
       export DISABLE_AUTO_TITLE='true'
+      export PS1=$PS1'$(show_nix_shell)'
     '';
 
     shellAliases = {
@@ -97,7 +117,7 @@
 
     oh-my-zsh = {
       enable = true;
-      plugins = [ "git" "fnm" "npm" "gh" "command-not-found" ];
+      plugins = [ "git" "npm" "gh" "command-not-found" ];
       theme = "robbyrussell";
     };
   };

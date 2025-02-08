@@ -1,1 +1,7 @@
+# Nix & devenv
 result
+.devenv*
+.direnv*
+
+# process-compose and services-flake
+data/

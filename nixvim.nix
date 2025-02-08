@@ -395,6 +395,7 @@ in {
           lua_ls.enable = true;
           nixd.enable = true;
           nixd.settings = { formatting.command = [ "nixfmt" ]; };
+          phpactor.enable = true;
           tailwindcss.enable = true;
           ts_ls.enable = true;
           volar.enable = true;
@@ -412,6 +413,7 @@ in {
           formatters_by_ft = {
             lua = [ "stylua" ];
             nix = [ "nixfmt" ];
+            php = [ "php_cs_fixer" ];
             "_" = [ "trim_whitespace" ];
           } // conform_prettier_sets;
         };

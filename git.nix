@@ -57,6 +57,7 @@ in {
         contents.user = me;
       }
     ];
+    ignores = [ ".devenv*" ".direnv*" ];
   };
 
   programs.gh = {
