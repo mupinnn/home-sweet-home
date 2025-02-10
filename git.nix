@@ -53,7 +53,7 @@ in {
       }
 
       {
-        condition = "gitdir:~/work/fap/";
+        condition = "gitdir:~/work/wfxlabs/";
         contents.user = me;
       }
     ];
