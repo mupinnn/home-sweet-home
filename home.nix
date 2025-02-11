@@ -64,7 +64,7 @@
 
   programs.direnv = {
     enable = true;
-    enableBashIntegration = true;
+    enableBashIntegration = false;
     enableZshIntegration = false;
     nix-direnv.enable = true;
   };
