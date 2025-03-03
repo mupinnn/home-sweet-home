@@ -78,6 +78,33 @@ in {
       '';
     }];
 
+    userCommands = {
+      FormatDisable = {
+        bang = true;
+        desc = "Disable autoformat-on-save";
+        command.__raw = ''
+          function(args)
+            if args.bang then
+              vim.b.disable_autoformat = true
+            else
+              vim.g.disable_autoformat = true
+            end
+          end
+        '';
+      };
+
+      FormatEnable = {
+        desc = "Disable autoformat-on-save";
+        command.__raw = ''
+          function()
+            vim.b.disable_autoformat = false
+            vim.g.disable_autoformat = false
+          end
+        '';
+      };
+
+    };
+
     keymaps = [
       {
         action = ":NvimTreeToggle<cr>";
@@ -108,6 +135,40 @@ in {
         key = "<leader>f";
         mode = [ "n" "v" ];
         options = { desc = "Format file or range (in visual mode)"; };
+      }
+
+      {
+        action.__raw = ''
+          function()
+            if vim.b.disable_autoformat then
+              vim.cmd "FormatEnable"
+              vim.notify "Enabled autoformat for current buffer"
+            else
+              vim.cmd "FormatDisable!"
+              vim.notify " Disabled autoformat for current buffer"
+            end
+          end
+        '';
+        key = "<leader>tf";
+        mode = [ "n" ];
+        options = { desc = "Toggle autoformat for current buffer"; };
+      }
+
+      {
+        action.__raw = ''
+          function()
+            if vim.g.disable_autoformat then
+              vim.cmd "FormatEnable"
+              vim.notify "Enabled autoformat globally"
+            else
+              vim.cmd "FormatDisable"
+              vim.notify " Disabled autoformat globally"
+            end
+          end
+        '';
+        key = "<leader>tF";
+        mode = [ "n" ];
+        options = { desc = "Toggle autoformat globally"; };
       }
     ];
 
@@ -413,11 +474,19 @@ in {
       conform-nvim = {
         enable = true;
         settings = {
-          format_on_save = {
-            lsp_fallback = true;
-            async = false;
-            timeout_ms = 1000;
-          };
+          format_on_save.__raw = ''
+            function(bufnr)
+              if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+                return
+              end
+
+              return {
+                lsp_fallback = true,
+                async = false,
+                timeout_ms = 1000
+              }
+            end
+          '';
           formatters_by_ft = {
             lua = [ "stylua" ];
             nix = [ "nixfmt" ];
