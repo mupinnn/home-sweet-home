@@ -21,6 +21,17 @@ let
     name = lang;
     value = [ "prettier" ];
   }) ft_using_prettier);
+
+  treesitter-blade-grammar = pkgs.tree-sitter.buildGrammar {
+    language = "blade";
+    version = "bcdc4b0";
+    src = pkgs.fetchFromGitHub {
+      owner = "EmranMR";
+      repo = "tree-sitter-blade";
+      rev = "bcdc4b01827cac21205f7453e9be02f906943128";
+      hash = "sha256-Svco/cweC311fUlKi34sh0AWfP/VYRWJMXyAuUVRhAw=";
+    };
+  };
 in {
   programs.nixvim = {
     enable = true;
@@ -57,7 +68,12 @@ in {
       wrap = false;
     };
 
-    filetype = { extension = { "mdx" = "markdown.mdx"; }; };
+    filetype = {
+      extension = {
+        "mdx" = "markdown.mdx";
+        "blade.php" = "blade";
+      };
+    };
 
     colorschemes.kanagawa.enable = true;
 
@@ -342,7 +358,19 @@ in {
             "vue"
             "xml"
             "yaml"
-          ];
+          ] ++ [ treesitter-blade-grammar ];
+        luaConfig.post = ''
+          do
+            local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+            parser_config.blade = {
+              install_info = {
+                url = "''${treesitter-blade-grammar}",
+                files = {"src/parser.c"}
+              },
+              filetype = "blade"
+            }
+          end
+        '';
       };
 
       ts-autotag = {
@@ -359,6 +387,7 @@ in {
       telescope = {
         enable = true;
         extensions = {
+          live-grep-args.enable = true;
           fzf-native.enable = true;
           fzf-native.settings = {
             fuzzy = true;
@@ -368,6 +397,7 @@ in {
           };
         };
         settings = {
+          defaults = { file_ignore_patterns = [ "node_modules" "vendor" ]; };
           pickers = {
             find_files = {
               find_command =
