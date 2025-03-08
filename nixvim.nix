@@ -482,11 +482,16 @@ in {
           emmet_ls.enable = true;
           eslint.enable = true;
           html.enable = true;
+          intelephense.enable = true;
+          intelephense.package = pkgs.intelephense;
           jsonls.enable = true;
           lua_ls.enable = true;
           nixd.enable = true;
           nixd.settings = { formatting.command = [ "nixfmt" ]; };
-          phpactor.enable = true;
+          # phpactor.enable = true;
+          # phpactor.extraOptions = {
+          #   init_options = { "language_server_php_cs_fixer.enabled" = true; };
+          # };
           tailwindcss.enable = true;
           ts_ls.enable = true;
           volar.enable = true;
