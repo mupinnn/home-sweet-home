@@ -330,6 +330,7 @@ in {
             "comment"
             "cpp"
             "css"
+            "dart"
             "diff"
             "dot"
             "git_config"
@@ -481,6 +482,7 @@ in {
           bashls.enable = true;
           ccls.enable = true;
           cssls.enable = true;
+          dartls.enable = true;
           emmet_ls.enable = true;
           eslint.enable = true;
           html.enable = true;
@@ -495,6 +497,18 @@ in {
           #   init_options = { "language_server_php_cs_fixer.enabled" = true; };
           # };
           tailwindcss.enable = true;
+          tailwindcss.extraOptions = {
+            settings = {
+              tailwindCSS = {
+                experimental = {
+                  classRegex =
+                    # [ ''(["'`][^"'`]*.*?["'`])'' ''["'`]([^"'`]*).*?["'`]'' ];
+                    # [ "tv\\(([^)]*)\\)" ''["'`]?([^"'`]+)["'`]?'' ];
+                    [ "(`.*?`)" ''(".*?")'' "('.*?')" ];
+                };
+              };
+            };
+          };
           ts_ls.enable = true;
           volar.enable = true;
         };
@@ -528,6 +542,7 @@ in {
             lua = [ "stylua" ];
             nix = [ "nixfmt" ];
             php = [ "php_cs_fixer" ];
+            dart = [ "dart_format" ];
             "_" = [ "trim_whitespace" ];
           } // conform_prettier_sets;
         };
