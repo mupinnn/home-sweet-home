@@ -3,6 +3,7 @@
 let
   ft_using_prettier = [
     "astro"
+    "blade"
     "css"
     "html"
     "javascript"
