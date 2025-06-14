@@ -52,6 +52,7 @@
     unzip
     rsync
     xclip
+    zip
 
     # Tools
     bat
