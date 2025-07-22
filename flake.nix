@@ -1,68 +1,67 @@
 {
   description =
-    "mupin's system configuration with Nix and `home-manager` using Flakes";
+    "mupin's multi-machine system configuration with Nix and `home-manager` using Flakes";
 
   inputs = {
-    nixpkgs.url = "github:NixOs/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:NixOs/nixpkgs/release-25.05";
+    nixpkgs-unstable.url = "github:NixOs/nixpkgs/nixpkgs-unstable";
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixvim = {
-      url = "github:nix-community/nixvim";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    devenv = {
-      url = "github:cachix/devenv";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
-    services-flake.url = "github:juspay/services-flake";
   };
 
-  outputs = { self, home-manager, nixvim, devenv, nixpkgs, process-compose-flake
-    , services-flake, ... }@inputs:
+  outputs = { self, ... }@inputs:
     let
-      inherit self;
+      hosts = import ./config/hosts.nix;
 
-      supportedSystems = [ "x86_64-linux" ];
-    in {
-      lib.forAllSystems = f:
-        nixpkgs.lib.genAttrs supportedSystems (system:
-          f rec {
-            pkgs = nixpkgs.legacyPackages.${system};
-
-            servicesModules = {
-              pgsql = (import process-compose-flake.lib {
-                inherit pkgs;
-              }).evalModules {
-                modules = [
-                  services-flake.processComposeModules.default
-                  { services.postgres."pg1".enable = true; }
-                ];
-              };
+      mkHomeConfigurations =
+        {
+          host,
+          nixpkgs,
+          home-manager,
+          modules ? []
+        }: home-manager.lib.homeManagerConfiguration {
+          pkgs = import nixpkgs {
+            system = host.arch;
+            config = {
+              allowUnfree = true;
             };
-          });
-
-      homeConfigurations = {
-        mupin = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.${builtins.elemAt supportedSystems 0};
-          modules = [ nixvim.homeManagerModules.nixvim ./home.nix ];
-          extraSpecialArgs = { inherit self; };
+          };
+          modules = [
+            ./hosts/${host.dir}/home.nix
+          ] ++ modules;
         };
+
+      mkNixOSConfigurations =
+        {
+          host,
+          nixpkgs,
+          home-manager,
+          modules ? []
+        }: nixpkgs.lib.nixosSystem {
+          system = host.arch;
+          modules = [
+            ./hosts/${host.dir}/configuration.nix
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users."${host.user}" = import ./hosts/${host.dir}/home.nix;
+            }
+          ] ++ modules;
+        };
+    in {
+      nixosConfigurations."${hosts.nixosFull.hostname}" = mkNixOSConfigurations {
+        host = hosts.nixosFull;
+        nixpkgs = inputs.nixpkgs;
+        home-manager = inputs.home-manager;
       };
 
-      # There is an active issue regarding `devenv up` command for multiple shells setup
-      # @see https://github.com/cachix/devenv/issues/1178
-      # packages.${system} = {
-      #   pgsql-devenv-up = self.devShells.${system}.pgsql.config.procfileScript;
-      # };
-
-      packages = self.lib.forAllSystems ({ servicesModules, ... }: {
-        pgsql = servicesModules.pgsql.config.outputs.package;
-      });
-
-      devShells = self.lib.forAllSystems ({ servicesModules, pkgs, ... }:
-        import ./devShells.nix { inherit pkgs devenv servicesModules inputs; });
+      homeConfigurations."${hosts.wsl.hostname}" = mkHomeConfigurations {
+        host = hosts.wsl;
+        nixpkgs = inputs.nixpkgs;
+        home-manager = inputs.home-manager;
+      };
     };
 }
