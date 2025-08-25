@@ -3,6 +3,7 @@
 {
   options = { gui.enable = lib.mkEnableOption "Enable GUI apps"; };
 
-  config =
-    lib.mkIf config.gui.enable { home.packages = with pkgs; [ discord ]; };
+  config = lib.mkIf config.gui.enable {
+    home.packages = with pkgs; [ google-chrome firefox ];
+  };
 }

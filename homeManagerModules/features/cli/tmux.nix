@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   tmuxWorkspaces = {
@@ -46,45 +46,48 @@ let
     };
   };
 in {
-  home.shellAliases = {
-    tme = "tmuxp load ${
-        builtins.toFile "tmuxp-me.json" (builtins.toJSON tmuxWorkspaces.me)
-      }";
-    twork = "tmuxp load ${
-        builtins.toFile "tmuxp-work.json" (builtins.toJSON tmuxWorkspaces.work)
-      }";
+  config = lib.mkIf config.cli.enable {
+    home.shellAliases = {
+      tme = "tmuxp load ${
+          builtins.toFile "tmuxp-me.json" (builtins.toJSON tmuxWorkspaces.me)
+        }";
+      twork = "tmuxp load ${
+          builtins.toFile "tmuxp-work.json"
+          (builtins.toJSON tmuxWorkspaces.work)
+        }";
+    };
+
+    programs.tmux = {
+      enable = true;
+      mouse = true;
+      prefix = "C-a";
+      terminal = "tmux-256color";
+      keyMode = "vi";
+      clock24 = true;
+      historyLimit = 10000;
+
+      plugins = with pkgs.tmuxPlugins; [
+        sensible
+        pain-control
+        yank
+        prefix-highlight
+        better-mouse-mode
+
+        {
+          plugin = tmux-kanagawa;
+          extraConfig = ''
+            set -g @kanagawa-plugins "attached-clients battery cwd network network-bandwidth time"
+            set -g @kanagawa-no-battery-label " "
+          '';
+        }
+      ];
+
+      extraConfig = ''
+        set-option -ga terminal-overrides ",xterm-256color:Tc"
+        set-option -g status-position top
+      '';
+    };
+
+    programs.tmux.tmuxp.enable = config.programs.tmux.enable;
   };
-
-  programs.tmux = {
-    enable = true;
-    mouse = true;
-    prefix = "C-a";
-    terminal = "tmux-256color";
-    keyMode = "vi";
-    clock24 = true;
-    historyLimit = 10000;
-
-    plugins = with pkgs.tmuxPlugins; [
-      sensible
-      pain-control
-      yank
-      prefix-highlight
-      better-mouse-mode
-
-      {
-        plugin = tmux-kanagawa;
-        extraConfig = ''
-          set -g @kanagawa-plugins "attached-clients battery cwd network network-bandwidth time"
-          set -g @kanagawa-no-battery-label " "
-        '';
-      }
-    ];
-
-    extraConfig = ''
-      set-option -ga terminal-overrides ",xterm-256color:Tc"
-      set-option -g status-position top
-    '';
-  };
-
-  programs.tmux.tmuxp.enable = config.programs.tmux.enable;
 }

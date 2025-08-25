@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 
 {
   imports = [ ./gnome.nix ];
@@ -13,10 +13,11 @@
     isNormalUser = true;
     description = "mupin";
     extraGroups = [ "networkmanager" "wheel" ];
+    shell = pkgs.zsh;
   };
 
   nixpkgs.config.allowUnfree = true;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  programs.firefox.enable = true;
+  programs.zsh.enable = true;
 }

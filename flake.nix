@@ -44,7 +44,7 @@
       homeConfigurations = {
         mupin = lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          modules = [ ./homeManagerModules/features/cli ];
+          modules = [ ./homeManagerModules ];
           extraSpecialArgs = { inherit inputs; };
         };
       };

@@ -15,14 +15,24 @@
         layout = "us";
         variant = "";
       };
+
+      excludePackages = with pkgs; [ xterm ];
     };
 
     environment.gnome.excludePackages = (with pkgs; [
       epiphany
       geary
-      weather
       cheese
       gedit
+      weather
+      simple-scan
+      yelp
+      gnome-font-viewer
+      gnome-text-editor
+      gnome-extensions-cli
+      gnome-shell-extensions
+      gnome-extension-manager
+      gnome-weather
       gnome-software
       gnome-maps
       gnome-connections
