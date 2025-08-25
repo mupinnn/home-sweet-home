@@ -1,12 +1,12 @@
 { pkgs, inputs, ... }:
 
 {
-  programs.home-manager.enable = true;
-
-  imports = [ inputs.nixvim.homeManagerModules.nixvim ./nixvim.nix ./git.nix ./tmux.nix ];
-
-  nixpkgs.config.allowUnfree = true;
-  nix.settings.experimental-features = ["nix-command" "flakes"];
+  imports = [
+    inputs.nixvim.homeManagerModules.nixvim
+    ./nixvim.nix
+    ./git.nix
+    ./tmux.nix
+  ];
 
   home.packages = with pkgs; [
     # Development

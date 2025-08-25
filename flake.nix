@@ -1,6 +1,6 @@
 {
   description =
-    "mupin's multi-machine system configuration with Nix and `home-manager` using Flakes";
+    "mupin's multi-machine system configuration with Nix and Home Manager using Flakes";
 
   inputs = {
     nixpkgs.url = "github:NixOs/nixpkgs/release-25.05";
@@ -15,30 +15,37 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, nixvim, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let
-      hosts = import ./config/hosts.nix;
+      inherit (self) outputs;
+
+      lib = nixpkgs.lib // home-manager.lib;
     in {
+      inherit lib;
+
       nixosConfigurations = {
-        "${hosts.nixProvidence.hostname}" = nixpkgs.lib.nixosSystem {
-          system = hosts.nixProvidence.arch;
-          specialArgs = {
-            inherit inputs;
-            host = hosts.nixProvidence;
-          };
+        nixProvidence = lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs; };
           modules = [
-            ./hosts/${hosts.nixProvidence.dir}/default.nix
-            
+            ./hosts/nixProvidence/configuration.nix
+            ./nixosModules
             home-manager.nixosModules.home-manager
             {
-              home-manager.useUserPackages = true;
               home-manager.extraSpecialArgs = { inherit inputs; };
-              home-manager.users."${hosts.nixProvidence.user}" = import ./hosts/${hosts.nixProvidence.dir}/home.nix {
-                pkgs = nixpkgs.legacyPackages."${hosts.nixProvidence.arch}";
-                host = hosts.nixProvidence;
-              };
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.mupin = ./hosts/nixProvidence/home.nix;
             }
           ];
+        };
+      };
+
+      homeConfigurations = {
+        mupin = lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          modules = [ ./homeManagerModules/features/cli ];
+          extraSpecialArgs = { inherit inputs; };
         };
       };
     };
