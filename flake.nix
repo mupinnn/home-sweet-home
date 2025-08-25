@@ -15,11 +15,18 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, systems, ... }@inputs:
     let
       inherit (self) outputs;
 
       lib = nixpkgs.lib // home-manager.lib;
+      forEachSystem = f:
+        lib.genAttrs (import systems) (system: f pkgsFor.${system});
+      pkgsFor = lib.genAttrs (import systems) (system:
+        import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        });
     in {
       inherit lib;
 
@@ -48,5 +55,8 @@
           extraSpecialArgs = { inherit inputs; };
         };
       };
+
+      devShells =
+        forEachSystem (pkgs: import ./devShells.nix { inherit pkgs; });
     };
 }

@@ -4,6 +4,12 @@
   options = { gui.enable = lib.mkEnableOption "Enable GUI apps"; };
 
   config = lib.mkIf config.gui.enable {
-    home.packages = with pkgs; [ google-chrome firefox ];
+    home.packages = with pkgs; [
+      google-chrome
+      firefox
+      obsidian
+      davinci-resolve
+      bitwarden
+    ];
   };
 }
