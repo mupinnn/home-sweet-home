@@ -10,6 +10,7 @@
       obsidian
       davinci-resolve
       bitwarden
+      obs-studio
     ];
   };
 }
