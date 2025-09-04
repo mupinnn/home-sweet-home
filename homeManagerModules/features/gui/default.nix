@@ -11,6 +11,7 @@
       davinci-resolve
       bitwarden
       obs-studio
+      brave
     ];
   };
 }

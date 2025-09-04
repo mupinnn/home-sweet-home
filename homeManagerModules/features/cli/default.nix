@@ -37,6 +37,7 @@
       gnupg
       curl
       wget
+      ffmpeg
     ];
 
     programs.direnv = {
