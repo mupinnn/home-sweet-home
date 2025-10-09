@@ -148,7 +148,7 @@ in {
         {
           action.__raw = ''
             function()
-              require("conform").format({ lsp_fallback = true, async = false, timeout_ms = 1000 })
+              require("conform").format({ lsp_fallback = true, async = false, timeout_ms = 5000 })
             end
           '';
           key = "<leader>f";
@@ -537,7 +537,7 @@ in {
                 return {
                   lsp_fallback = true,
                   async = false,
-                  timeout_ms = 1000
+                  timeout_ms = 5000
                 }
               end
             '';

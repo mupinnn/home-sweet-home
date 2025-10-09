@@ -44,5 +44,13 @@
       gnome-initial-setup
       gnome-calendar
     ]);
+
+    programs.dconf.profiles.users.databases = [{
+      settings = {
+        "org/gnome/desktop/wm/preferences" = {
+          button-layout = "minimize,maximize,close";
+        };
+      };
+    }];
   };
 }

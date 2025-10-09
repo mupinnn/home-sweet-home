@@ -16,6 +16,9 @@
       jq
       android-tools
       devenv
+      dive
+      podman-tui
+      podman-compose
 
       # Overview
       neofetch
