@@ -9,9 +9,16 @@
       firefox
       obsidian
       davinci-resolve
-      bitwarden
+      bitwarden-desktop
       obs-studio
       brave
+      insomnia
+      arduino-ide
+      ciscoPacketTracer8
+      vscode
+      antigravity
+      dbeaver-bin
+      code-cursor
     ];
   };
 }

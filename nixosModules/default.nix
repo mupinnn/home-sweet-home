@@ -12,7 +12,7 @@
   users.users.mupin = {
     isNormalUser = true;
     description = "mupin";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" ];
     shell = pkgs.zsh;
   };
 
@@ -26,8 +26,8 @@
   virtualisation = {
     podman = {
       enable = true;
-      dockerCompat = true;
       defaultNetwork.settings.dns_enabled = true;
     };
+    docker = { enable = true; };
   };
 }

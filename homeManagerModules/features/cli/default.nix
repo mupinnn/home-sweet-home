@@ -19,6 +19,8 @@
       dive
       podman-tui
       podman-compose
+      docker-compose
+      cursor-cli
 
       # Overview
       neofetch
@@ -41,6 +43,7 @@
       curl
       wget
       ffmpeg
+      firejail
     ];
 
     programs.direnv = {
