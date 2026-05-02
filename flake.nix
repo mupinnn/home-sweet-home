@@ -54,6 +54,19 @@
           modules = [ ./homeManagerModules ];
           extraSpecialArgs = { inherit inputs; };
         };
+
+        lupus = lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+          modules = [
+            ./homeManagerModules
+            {
+              gui.enable = false;
+              home.username = "bvarta-ahmad";
+              home.homeDirectory = "/User/bvarta-ahmad";
+            }
+          ];
+          extraSpecialArgs = { inherit inputs; };
+        };
       };
 
       devShells =
